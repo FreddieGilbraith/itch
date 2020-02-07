@@ -1,0 +1,47 @@
+[package]
+name = 'itch'
+version = '0.1.0'
+authors = ['Freddie Gilbraith <freddie.gilbraith@littlebonsai.co.uk>']
+edition = '2018'
+description = 'A cli tool for InTerCHanging between different serialized data formats'
+documentation = 'https://github.com/FreddieGilbraith/itch'
+homepage = 'https://github.com/FreddieGilbraith/itch'
+license = 'MIT'
+readme = 'README.md'
+repository = 'https://github.com/FreddieGilbraith/itch'
+categories = [
+    'command-line-utilities',
+    'data-structures',
+    'development-tools',
+    'parsing',
+    'encoding',
+]
+keywords = [
+    'serde',
+    'cli',
+    'json',
+    'toml',
+    'xml',
+    'yaml',
+    'interchange',
+    'convert',
+    'tool',
+]
+include = [ "**/*.rs", "Cargo.toml", ]
+
+[dependencies]
+clap = "3.0.0-beta.2"
+serde-xml-rs = "0.4.1"
+serde_derive = "1.0.125"
+serde_json = "1.0.64"
+serde_qs = "0.8.3"
+serde_yaml = "0.8.17"
+toml = "0.5.8"
+
+[dependencies.indexmap]
+version = "1.6.2"
+features = ['serde-1']
+
+[dependencies.serde]
+version = "1.0.125"
+features = ['derive']
