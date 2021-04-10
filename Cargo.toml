@@ -19,10 +19,6 @@ categories = [
 keywords = [
     'serde',
     'cli',
-    'json',
-    'toml',
-    'xml',
-    'yaml',
     'interchange',
     'convert',
     'tool',
