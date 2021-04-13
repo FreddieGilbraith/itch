@@ -1,23 +1,49 @@
 # Itch
 
-> Simple format InTerCHange (get it)
+> InTerCHanges one data format into another (get it?)
 
-A simple CLI that attempts best effort translation between data formats
+A very simple cli to convert between some of the most common plain-text data formats. It can't perform every conversion that might be theoretically possible, but it tries its best
 
-Useful for debugging and writing quick scripts, probably shouldn't be used as part of your production pipeline
+<!-- vim-markdown-toc GFM -->
+
+* [Installation](#installation)
+* [Overview](#overview)
+   * [Formats](#formats)
+      * [First Class](#first-class)
+      * [Second Class](#second-class)
+   * [Behaviour](#behaviour)
+* [Implementation](#implementation)
+
+<!-- vim-markdown-toc -->
+
+# Installation
+
+`itch` currently does not offer binary downloads, and must instead be built from source. You can use [rustup][rustup] to get the rust toolchain, the run the following command to download and install itch:
 
 ```bash
-# view help
-itch --help
-
-# convert input.json to output.toml
-itch -i input.json -o output.toml
-
-# convert input.xml to output.yml
-cat input.xml | itch -f xml -t yaml | output.yml
+cargo install --force --git https://github.com/FreddieRidell/itch.git
 ```
 
-## Supported Formats
+# Overview
+
+```
+USAGE:
+    itch [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -f, --from <from-type>    Format of the input, will be derived if possible
+    -i, --input <input>       Path to the input file, leave empty for stdin
+    -o, --output <output>     Path to the output file, leave empty for stdout
+    -t, --to <to-type>        Format of the output, will be derived if possible
+```
+
+`itch` can take input from a file or std in, and output to a file or std out. If given a file as input or output it will try to detect the format automatically. `itch` doesn't do any manipulation to data to satisfy the different constructs that different formats can express; so there's no guarantee that a conversion will work.
+
+## Formats
 
 ### First Class
 
@@ -33,3 +59,58 @@ Somewhat unreliable, but can be used for basic transformations
 
 - url query strings
 - xml
+
+## Behaviour
+
+`itch` should always produce the same output when given the same input:
+
+**input**
+
+```shell
+echo '<element key="value"><child/></element>'
+   | itch -f xml -t json
+```
+
+**output**
+
+```json
+{ "key": "value", "child": {} }
+```
+
+`itch` will not necessarily produce output that can automatically be reversed:
+
+**input**
+
+```shell
+echo '<element key="value"><child/></element>'
+   | itch -f xml -t json
+   | itch -f json -t xml
+```
+
+**output**
+
+```xml
+<key>value</key><child></child>
+```
+
+# Implementation
+
+Uses [serde][serde] and it's own internal data representation format to act as an intermediary between the different data formats:
+
+```rust
+enum Itch {
+    Obj(IndexMap<String, Itch>),
+    Array(Vec<Itch>),
+    Bool(bool),
+    Int(i64),
+    Float(f64),
+    Text(String),
+}
+```
+
+Each deserialization step converts to this type, and each serialisation step converts from it.
+
+[clap]: https://github.com/clap-rs/clap
+[crates]: https://crates.io/
+[rustup]: https://rustup.rs/
+[serde]: https://serde.rs/
