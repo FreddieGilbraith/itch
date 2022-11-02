@@ -12,6 +12,7 @@ enum Itch {
     Text(String),
 }
 
+#[derive(Clone, Debug)]
 pub enum FromType {
     Json,
     Toml,
@@ -36,6 +37,7 @@ impl std::str::FromStr for FromType {
     }
 }
 
+#[derive(Clone, Debug)]
 pub enum ToType {
     Json,
     Toml,

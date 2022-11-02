@@ -1,31 +1,31 @@
 extern crate clap;
 extern crate itch;
 
-use clap::Clap;
+use clap::Parser;
 use std::ffi::OsStr;
 use std::fs::File;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-// the clap docs haven't caught up to structopt yet, so read them instead
 /// InTerCHanges one data format into another
-#[derive(Clap)]
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
 struct CliArgs {
     /// Format of the input, will be derived if possible
-    #[clap(short = 'f', long = "from")]
+    #[arg(short = 'f', long = "from")]
     from_type: Option<itch::FromType>,
 
     /// Format of the output, will be derived if possible
-    #[clap(short = 't', long = "to")]
+    #[arg(short = 't', long = "to")]
     to_type: Option<itch::ToType>,
 
     /// Path to the input file, leave empty for stdin
-    #[clap(short = 'i', long = "input", parse(from_os_str))]
-    input: Option<PathBuf>,
+    #[clap(short = 'i', long = "input")]
+    input_file_path: Option<String>,
 
     /// Path to the output file, leave empty for stdout
-    #[clap(short = 'o', long = "output", parse(from_os_str))]
-    output: Option<PathBuf>,
+    #[clap(short = 'o', long = "output")]
+    output_file_path: Option<String>,
 }
 
 fn open_or_create_file(path: &PathBuf) -> Result<File, std::io::Error> {
@@ -81,21 +81,22 @@ fn get_to_type_from_output(output: &PathBuf) -> Result<itch::ToType, String> {
 fn run() -> Result<(), String> {
     let cli_args: CliArgs = CliArgs::parse();
 
-    match (cli_args.input.as_ref(), cli_args.output.as_ref()) {
+    let input_file_path = cli_args.input_file_path.clone().map(PathBuf::from);
+    let output_file_path = cli_args.output_file_path.clone().map(PathBuf::from);
+
+    match (input_file_path.as_ref(), output_file_path.as_ref()) {
         (Some(input), Some(output)) => itch::convert(
             &get_from_type_from_input(&input)?,
             &get_to_type_from_output(&output)?,
-            File::open(input)
-                .map_err(|e| format!("could not open input file to be read ({})", e))?,
+            File::open(input).map_err(|e| format!("could not open input file ({})", e))?,
             open_or_create_file(output)
-                .map_err(|e| format!("could not open output file to be read ({})", e))?,
+                .map_err(|e| format!("could not open output file ({})", e))?,
         ),
 
         (Some(input), None) => itch::convert(
             &get_from_type_from_input(&input)?,
             get_to_type_to_cli_args(&cli_args)?,
-            File::open(input)
-                .map_err(|e| format!("could not open input file to be read ({})", e))?,
+            File::open(input).map_err(|e| format!("could not open input file ({})", e))?,
             std::io::stdout(),
         ),
 
@@ -104,7 +105,7 @@ fn run() -> Result<(), String> {
             &get_to_type_from_output(&output)?,
             std::io::stdin(),
             open_or_create_file(output)
-                .map_err(|e| format!("could not open output file to be read ({})", e))?,
+                .map_err(|e| format!("could not open output file ({})", e))?,
         ),
 
         (None, None) => itch::convert(
