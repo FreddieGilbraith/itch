@@ -32,6 +32,7 @@ impl std::str::FromStr for FromType {
             "url" => Ok(Self::Url),
             "xml" => Ok(Self::Xml),
             "yaml" => Ok(Self::Yaml),
+            "yml" => Ok(Self::Yaml),
             _ => Err(format!("could not parse `{}` as an input type", s)),
         }
     }

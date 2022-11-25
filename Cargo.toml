@@ -1,6 +1,6 @@
 [package]
 name = 'itch'
-version = '0.2.0'
+version = '0.2.1'
 authors = ['Freddie Gilbraith <freddie.gilbraith@littlebonsai.co.uk>']
 edition = '2018'
 description = 'A cli tool for InTerCHanging between different serialized data formats'
