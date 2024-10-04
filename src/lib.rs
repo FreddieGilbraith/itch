@@ -19,6 +19,7 @@ pub enum FromType {
     Url,
     Yaml,
     Xml,
+    Cbor,
 }
 
 impl std::str::FromStr for FromType {
@@ -26,6 +27,7 @@ impl std::str::FromStr for FromType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            "cbor" => Ok(Self::Cbor),
             "json" => Ok(Self::Json),
             "qs" => Ok(Self::Url),
             "toml" => Ok(Self::Toml),
@@ -45,6 +47,7 @@ pub enum ToType {
     Url,
     Yaml,
     Xml,
+    Cbor,
 }
 
 impl std::str::FromStr for ToType {
@@ -52,6 +55,7 @@ impl std::str::FromStr for ToType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            "cbor" => Ok(Self::Cbor),
             "json" => Ok(Self::Json),
             "qs" => Ok(Self::Url),
             "toml" => Ok(Self::Toml),
@@ -96,6 +100,10 @@ pub fn convert<From: std::io::Read, To: std::io::Write>(
                 serde_qs::from_str(&s)
                     .map_err(|e| format!("error parsing url query string: `{}`", e))?
             }
+
+            FromType::Cbor => {
+                serde_cbor::from_reader(input).map_err(|e| format!("error parsing cbor `{}`", e))?
+            }
         };
 
     match to_type {
@@ -121,6 +129,9 @@ pub fn convert<From: std::io::Read, To: std::io::Write>(
                 .map(|_| ())
                 .map_err(|e| format!("error outputting toml: `{}`", e))?
         }
+
+        ToType::Cbor => serde_cbor::to_writer(output, &itch)
+            .map_err(|e| format!("error outputing cbor `{}`", e))?,
     };
 
     Ok(())
