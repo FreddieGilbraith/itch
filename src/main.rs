@@ -119,6 +119,6 @@ fn run() -> Result<(), String> {
 
 fn main() {
     if let Err(e) = run() {
-        println!("{}\nrun `itch --help` for cli arguments", e);
+        eprintln!("{}\nrun `itch --help` for cli arguments", e);
     }
 }

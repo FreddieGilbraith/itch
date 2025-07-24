@@ -1,6 +1,6 @@
 [package]
 name = 'itch'
-version = '0.2.1'
+version = '0.2.3'
 edition = '2018'
 description = 'A cli tool for InTerCHanging between different serialized data formats'
 documentation = 'https://github.com/FreddieGilbraith/itch'
@@ -10,20 +10,20 @@ readme = 'README.md'
 repository = 'https://github.com/FreddieGilbraith/itch'
 authors = ['Freddie Gilbraith <freddie.gilbraith@littlebonsai.co.uk>']
 categories = [
-    'command-line-utilities',
-    'data-structures',
-    'development-tools',
-    'parsing',
-    'encoding',
+  'command-line-utilities',
+  'data-structures',
+  'development-tools',
+  'parsing',
+  'encoding',
 ]
 keywords = [
-    'serde',
-    'cli',
-    'interchange',
-    'convert',
-    'tool',
+  'serde',
+  'cli',
+  'interchange',
+  'convert',
+  'tool',
 ]
-include = [ "**/*.rs", "Cargo.toml", ]
+include = ["**/*.rs", "Cargo.toml"]
 
 [dependencies]
 serde-xml-rs = "0.4.1"
