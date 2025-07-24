@@ -2,26 +2,13 @@
 
 > InTerCHanges one data format into another (get it?)
 
-A very simple cli to convert between some of the most common plain-text data formats. It can't perform every conversion that might be theoretically possible, but it tries its best
-
-<!-- vim-markdown-toc GFM -->
-
-* [Installation](#installation)
-* [Overview](#overview)
-   * [Formats](#formats)
-      * [First Class](#first-class)
-      * [Second Class](#second-class)
-   * [Behaviour](#behaviour)
-* [Implementation](#implementation)
-
-<!-- vim-markdown-toc -->
+A very simple cli to convert between some of the most common plain-text data formats.
+It can't perform every conversion that might be theoretically possible, but it tries its best
 
 # Installation
 
-`itch` currently does not offer binary downloads, and must instead be built from source. You can use [rustup][rustup] to get the rust toolchain, the run the following command to download and install itch:
-
 ```bash
-cargo install --force --git https://github.com/FreddieRidell/itch.git
+cargo install itch --locked
 ```
 
 # Overview
@@ -41,7 +28,9 @@ OPTIONS:
     -t, --to <to-type>        Format of the output, will be derived if possible
 ```
 
-`itch` can take input from a file or std in, and output to a file or std out. If given a file as input or output it will try to detect the format automatically. `itch` doesn't do any manipulation to data to satisfy the different constructs that different formats can express; so there's no guarantee that a conversion will work.
+`itch` can take input from a file or std in, and output to a file or std out. If given a file as input or output it will try to detect the format automatically.
+
+`itch` doesn't do any manipulation to data to satisfy the different constructs that different formats can express (eg: in `toml`, object key ordering is important); so there's no guarantee that a conversion will work.
 
 ## Formats
 
@@ -49,6 +38,7 @@ OPTIONS:
 
 Can all be pretty reliably used as sources and targets
 
+- cbor
 - json
 - toml
 - yaml
@@ -62,13 +52,10 @@ Somewhat unreliable, but can be used for basic transformations
 
 ## Behaviour
 
-`itch` should always produce the same output when given the same input:
-
 **input**
 
 ```shell
-echo '<element key="value"><child/></element>'
-   | itch -f xml -t json
+echo '<element key="value"><child/></element>' | itch -f xml -t json
 ```
 
 **output**
@@ -82,9 +69,7 @@ echo '<element key="value"><child/></element>'
 **input**
 
 ```shell
-echo '<element key="value"><child/></element>'
-   | itch -f xml -t json
-   | itch -f json -t xml
+echo '<element key="value"><child/></element>' | itch -f xml -t json | itch -f json -t xml
 ```
 
 **output**
